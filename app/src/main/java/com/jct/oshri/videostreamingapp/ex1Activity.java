@@ -17,8 +17,8 @@ import static com.jct.oshri.videostreamingapp.Utilities.*;
 public class ex1Activity extends AppCompatActivity implements View.OnClickListener {
 
 
-    Uri streamUri = Uri.parse("https://www.rmp-streaming.com/media/bbb-360p.mp4");
-
+   Uri streamUri = Uri.parse("https://www.rmp-streaming.com/media/bbb-360p.mp4");
+   //Uri streamUri = Uri.parse("http://10.56.186.198:10188/chK_kDMMF1cwBlKvia8EiMpp_va9CvpDS2-p2sJYJhwp-o2kPLuljdM3L8oi-MBz/LINEAR/NBA/latest.m3u8");
     Button playButton;
     Button pauseButton;
     Button stopButton;
@@ -46,7 +46,7 @@ public class ex1Activity extends AppCompatActivity implements View.OnClickListen
         stopButton.setOnClickListener(this);
 
         mainVideoView.setVideoURI(streamUri);
-        mainVideoView.stopPlayback();
+       mainVideoView.stopPlayback();
 
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(mainVideoView);

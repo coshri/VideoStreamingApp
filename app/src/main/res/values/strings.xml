@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">VideoStreamingApp</string>
+    <string name="title_activity_ex2">Ex2Activity</string>
+
+    <string name="title_activity_fullscreen_play">FullscreenPlayActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
