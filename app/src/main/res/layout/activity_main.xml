@@ -23,7 +23,12 @@
         android:id="@+id/ex3Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ex3" />
+        android:text="fullscreen" />
 
+    <Button
+        android:id="@+id/ex4Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="navigation" />
 
 </LinearLayout>

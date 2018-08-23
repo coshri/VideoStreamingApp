@@ -118,7 +118,7 @@ public class FullscreenPlayActivity extends AppCompatActivity {
 //        });
 
         // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
+        // operations to prevent the jarring behavior of controls gocoing away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
@@ -150,6 +150,9 @@ public class FullscreenPlayActivity extends AppCompatActivity {
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getBaseContext(),
                 Util.getUserAgent(getBaseContext(), "yourApplicationName"), bandwidthMeter2);
 // This is the MediaSource representing the media to be played.
+
+
+      //  Uri mp4VideoUri = Uri.parse("https://www.rmp-streaming.com/media/bbb-360p.mp4");
         Uri mp4VideoUri =  Uri.parse("http://10.56.186.198:10188/chK_kDMMF1cwBlKvia8EiMpp_va9CvpDS2-p2sJYJhwp-o2kPLuljdM3L8oi-MBz/LINEAR/NBA/latest.m3u8");
         MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                 .createMediaSource(mp4VideoUri);

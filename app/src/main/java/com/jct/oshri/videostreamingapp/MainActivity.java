@@ -1,8 +1,11 @@
 package com.jct.oshri.videostreamingapp;
 
 import android.content.Intent;
+import android.media.projection.MediaProjection;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -11,7 +14,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button ex1Button;
     Button ex2Button;
 Button ex3Button;
-
+    Button ex4Button;
 
     void init()
     {
@@ -25,6 +28,9 @@ Button ex3Button;
 
         ex3Button = findViewById(R.id.ex3Button);
         ex3Button.setOnClickListener(this);
+
+        ex4Button = findViewById(R.id.ex4Button);
+        ex4Button.setOnClickListener(this);
     }
 
     @Override
@@ -42,5 +48,9 @@ Button ex3Button;
             startActivity(new Intent(this,Ex2Activity.class));
         if(v==ex3Button)
             startActivity(new Intent(this,FullscreenPlayActivity.class));
+        if(v==ex4Button)
+            startActivity(new Intent(this,NavigationActivity.class));
     }
+
+
 }

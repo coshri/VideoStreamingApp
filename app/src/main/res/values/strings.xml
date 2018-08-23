@@ -5,4 +5,27 @@
     <string name="title_activity_fullscreen_play">FullscreenPlayActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+
+    <string name="content_url_hls"><![CDATA[http://10.56.186.198:10188/chK_kDMMF1cwBlKvia8EiMpp_va9CvpDS2-p2sJYJhwp-o2kPLuljdM3L8oi-MBz/LINEAR/NBA/latest.m3u8]]></string>
+
+    <string name="content_url_mp4"><![CDATA[https://www.rmp-streaming.com/media/bbb-360p.mp4]]></string>
+    <string name="title_activity_media_projection_demo">MediaProjectionDemo</string>
+
+
+    <!--<string-array name="content_list">-->
+    <!--<string name="clear_mp4"><![CDATA[https://www.rmp-streaming.com/media/bbb-360p.mp4]]></string>-->
+    <!--<string name="clear_mp4_cisco"><![CDATA[]]></string>-->
+    <!--<string name="clear_m3u8_cisco"><![CDATA[http://10.56.186.198:10188/chK_kDMMF1cwBlKvia8EiMpp_va9CvpDS2-p2sJYJhwp-o2kPLuljdM3L8oi-MBz/LINEAR/NBA/latest.m3u8]]></string>-->
+
+    <!--</string-array>-->
+
+
 </resources>
