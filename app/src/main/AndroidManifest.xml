@@ -3,6 +3,9 @@
     package="com.jct.oshri.videostreamingapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+
 
     <application
         android:allowBackup="true"
@@ -12,11 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity android:name=".ex1Activity" />
         <activity
@@ -32,7 +35,27 @@
             android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
             android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+
+        </activity>
+        <activity
+            android:name=".SignInActivity"
+            android:label="@string/title_activity_sign_in"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CatalogActivity"
+            android:label="@string/title_activity_catalog"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

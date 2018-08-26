@@ -1,10 +1,21 @@
 package com.jct.oshri.videostreamingapp;
 
+import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PersistableBundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,12 +24,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -44,32 +59,41 @@ public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private final String STATE_RESUME_POSITION = "resumePosition";
-    private  final  String STATE_CONTENT_URL = "resumeContentUrl";
+    private final String STATE_CONTENT_URL = "resumeContentUrl";
+
 
     PlayerView playerView;
     private SimpleExoPlayer player;
 
     private long contentPosition;
-    private  String contentUrl;
-
-    private  DataSource.Factory manifestDataSourceFactory;
-    private  DataSource.Factory mediaDataSourceFactory;
+    private String contentUrl;
 
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-       // super.onConfigurationChanged(newConfig);
+    private DataSource.Factory manifestDataSourceFactory;
+    private DataSource.Factory mediaDataSourceFactory;
 
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
-        }else
-        {
-            super.onConfigurationChanged(newConfig);
-        }
-    }
+
+    private String user;
+    private String urlContetn;
+
+    TextView userNameTextView;
+    ImageButton startImageButton;
+
+
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//       // super.onConfigurationChanged(newConfig);
+//
+//        // Checks the orientation of the screen
+//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+//            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+//        }else
+//        {
+//            super.onConfigurationChanged(newConfig);
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,11 +105,9 @@ public class NavigationActivity extends AppCompatActivity
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
-
         setContentView(R.layout.activity_navigation);
-       // Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-     //   setSupportActionBar(toolbar);
-
+        // Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //   setSupportActionBar(toolbar);
 
 
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -99,7 +121,86 @@ public class NavigationActivity extends AppCompatActivity
 
 
         playerView = findViewById(R.id.player_view);
-        initExoPlayer(this);
+//        startImageButton = findViewById(R.id.startImageButton);
+//        startImageButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                initExoPlayer(getBaseContext());
+//            }
+//        });
+
+
+        initExoPlayer(getBaseContext());
+
+
+//            SignInDialogFragment signInDialogFragment = new SignInDialogFragment();
+//       signInDialogFragment.show(getFragmentManager(),"signIn Dialog");
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            user = intent.getStringExtra(SignInActivity.USER_NAME);
+            if (user != null) {
+
+
+                urlContetn = intent.getStringExtra(SignInActivity.PLAY_URL);
+
+
+                userNameTextView = findViewById(R.id.userNameTextView);
+
+                switch (user.toUpperCase()) {
+                    case "YELLOW":
+                        userNameTextView.setBackgroundColor(Color.YELLOW);
+                        break;
+                    case "BLUE":
+                        userNameTextView.setBackgroundColor(Color.BLUE);
+                        break;
+                    case "PINK":
+                        userNameTextView.setBackgroundColor(Color.RED);
+                        break;
+
+                    default:
+                        userNameTextView.setBackgroundColor(Color.TRANSPARENT);
+                }
+
+
+                if (userNameTextView != null)
+                    userNameTextView.setText(user);
+
+
+                String contentUrl = urlContetn; //getString(R.string.content_url_hls);
+                MediaSource contentMediaSource = buildMediaSource(Uri.parse(contentUrl), getBaseContext());
+
+
+                // Prepare the player with the source.
+                player.seekTo(contentPosition);
+                player.prepare(contentMediaSource);
+                player.setPlayWhenReady(true);
+
+                // new  sessionAsync().execute("http://192.168.1.100:8081/sessions/open?id=" + user);
+
+
+                player.addListener(new Player.DefaultEventListener() {
+                    @Override
+                    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                        if (playWhenReady && playbackState == Player.STATE_READY) {
+                            // media actually playing
+                            new sessionAsync().execute("http://192.168.1.100:8081/sessions/open?id=" + user);
+                        } else if (playWhenReady) {
+                            // might be idle (plays after prepare()),
+                            // buffering (plays when data available)
+                            // or ended (plays when seek away from end)
+                        } else {
+                            // player paused in any state
+                        }
+                    }
+                });
+
+
+            }
+
+        }
+
+
     }
 
     @Override
@@ -143,7 +244,7 @@ public class NavigationActivity extends AppCompatActivity
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        outState.putLong(STATE_RESUME_POSITION,contentPosition);
+        outState.putLong(STATE_RESUME_POSITION, contentPosition);
         super.onSaveInstanceState(outState, outPersistentState);
     }
 
@@ -173,6 +274,8 @@ public class NavigationActivity extends AppCompatActivity
             player.prepare(contentMediaSource);
             player.setPlayWhenReady(true);
 
+        } else if (id == R.id.uploadVideo) {
+            uploadFile();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -181,9 +284,7 @@ public class NavigationActivity extends AppCompatActivity
     }
 
 
-
-    private  void initExoPlayer(Context context)
-    {
+    private void initExoPlayer(Context context) {
         // Create a default track selector.
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
@@ -197,7 +298,7 @@ public class NavigationActivity extends AppCompatActivity
 
 
         // This is the MediaSource representing the content media (i.e. not the ad).
-     //   String contentUrl = context.getString(R.string.content_url_hls);
+        //   String contentUrl = context.getString(R.string.content_url_hls);
 //        MediaSource contentMediaSource = buildMediaSource(Uri.parse(contentUrl), context);
 //
 //
@@ -206,7 +307,6 @@ public class NavigationActivity extends AppCompatActivity
 //        player.seekTo(contentPosition);
 //        player.prepare(contentMediaSource);
 //        player.setPlayWhenReady(true);
-
 
 
         playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
@@ -248,9 +348,11 @@ public class NavigationActivity extends AppCompatActivity
     public void resetPlayer() {
         if (player != null) {
             contentPosition = player.getContentPosition();
-           // contentUrl = player.pre
+            // contentUrl = player.pre
             player.release();
             player = null;
+
+            new sessionAsync().execute("http://192.168.1.100:8081/sessions/close?id=" + user);
         }
     }
 
@@ -258,9 +360,135 @@ public class NavigationActivity extends AppCompatActivity
         if (player != null) {
             player.release();
             player = null;
+
+            new sessionAsync().execute("http://192.168.1.100:8081/sessions/close?id=" + user);
+
         }
     }
 
 
+    private static final int REQUEST_TAKE_GALLERY_VIDEO = 33;
+
+    void uploadFile() {
+
+        Intent intent = new Intent();
+        intent.setType("video/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Video"), REQUEST_TAKE_GALLERY_VIDEO);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_TAKE_GALLERY_VIDEO) {
+                Uri selectedImageUri = data.getData();
+
+                // OI FILE Manager
+                String filemanagerstring = selectedImageUri.getPath();
+
+                // MEDIA GALLERY
+                String selectedImagePath = FilePath.getPath(this, selectedImageUri);//.getPath(); //getPath2(this,selectedImageUri);
+                if (selectedImagePath != null) {
+
+                    HttpTools.uploadFileToServer("http:192.168.1.100:8083/content?name=" + user, selectedImagePath);
+                }
+            }
+        }
+    }
+
+    // UPDATED!
+    public String getPath(Uri uri) {
+
+        String[] proj = {MediaStore.MediaColumns.DATA};
+        @SuppressWarnings("deprecation")
+        Cursor cursor = managedQuery(uri, proj, null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        cursor.moveToFirst();
+
+        String mString = cursor.getString(column_index);
+
+        return mString;
+
+
+//        String[] projection = { MediaStore.Video.Media.DATA };
+//        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+//        if (cursor != null) {
+//            // HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
+//            // THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE MEDIA
+//            int column_index = cursor
+//                    .getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
+//            cursor.moveToFirst();
+//            return cursor.getString(column_index);
+//        } else
+//            return null;
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static String getPath2(final Context context, final Uri uri) {
+        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+        // DocumentProvider
+        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+            System.out.println("getPath() uri: " + uri.toString());
+            System.out.println("getPath() uri authority: " + uri.getAuthority());
+            System.out.println("getPath() uri path: " + uri.getPath());
+
+            // ExternalStorageProvider
+            //   if ("com.android.externalstorage.documents".equals(uri.getAuthority())) {
+            if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+                System.out.println("getPath() docId: " + docId + ", split: " + split.length + ", type: " + type);
+
+                // This is for checking Main Memory
+                if ("primary".equalsIgnoreCase(type)) {
+                    if (split.length > 1) {
+                        return Environment.getExternalStorageDirectory() + "/" + split[1] + "/";
+                    } else {
+                        return Environment.getExternalStorageDirectory() + "/";
+                    }
+                    // This is for checking SD Card
+                } else {
+                    return "storage" + "/" + docId.replace(":", "/");
+                }
+
+            }
+        }
+        return null;
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        String path = null;
+        String[] proj = {MediaStore.MediaColumns.DATA};
+
+        if ("content".equalsIgnoreCase(contentUri.getScheme())) {
+            Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+            if (cursor.moveToFirst()) {
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+                path = cursor.getString(column_index);
+            }
+            cursor.close();
+            return path;
+        } else if ("file".equalsIgnoreCase(contentUri.getScheme())) {
+            return contentUri.getPath();
+        }
+        return null;
+    }
+
+
+    class sessionAsync extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                return HttpTools.GET(strings[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
 
 }

@@ -5,8 +5,14 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/uploadVideo"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="upload"
+            />
+
+        <item
             android:id="@+id/clear_mp4"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_gallery"
             android:title="clear mp4"
             />
         <item

@@ -49,7 +49,7 @@ Button ex3Button;
         if(v==ex3Button)
             startActivity(new Intent(this,FullscreenPlayActivity.class));
         if(v==ex4Button)
-            startActivity(new Intent(this,NavigationActivity.class));
+            startActivity(new Intent(this,SignInActivity.class));
     }
 
 
