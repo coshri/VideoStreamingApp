@@ -42,7 +42,7 @@ import android.view.Surface;
 //import com.serenegiant.glutils.Texture2dProgram;
 //import com.serenegiant.glutils.WindowSurface;
 
-public class MediaScreenEncoder_1 // extends MediaVideoEncoderBase
+public class MediaScreenEncoder // extends MediaVideoEncoderBase
 {
 //    private static final boolean DEBUG = false; // TODO set false on release
 //    private static final String TAG = "MediaScreenEncoder";
