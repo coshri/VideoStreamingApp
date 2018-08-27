@@ -1,6 +1,7 @@
 package com.jct.oshri.videostreamingapp;
 
 import android.app.FragmentManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -22,6 +23,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,6 +55,12 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 //import com.google.android.exoplayer2.upstream.DataSource;
 
 public class NavigationActivity extends AppCompatActivity
@@ -372,7 +380,7 @@ public class NavigationActivity extends AppCompatActivity
     void uploadFile() {
 
         Intent intent = new Intent();
-        intent.setType("video/*");
+        intent.setType("*/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Video"), REQUEST_TAKE_GALLERY_VIDEO);
     }
@@ -380,17 +388,93 @@ public class NavigationActivity extends AppCompatActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_TAKE_GALLERY_VIDEO) {
-                Uri selectedImageUri = data.getData();
 
-                // OI FILE Manager
-                String filemanagerstring = selectedImageUri.getPath();
 
-                // MEDIA GALLERY
-                String selectedImagePath = FilePath.getPath(this, selectedImageUri);//.getPath(); //getPath2(this,selectedImageUri);
-                if (selectedImagePath != null) {
+                //no data present
+                Uri uri = data.getData();
+                String filePath = data.getData().getPath();
 
-                    HttpTools.uploadFileToServer("http:192.168.1.100:8083/content?name=" + user, selectedImagePath);
+                String name = "myfile.txt";// getContentName(getContentResolver(), uri);
+                File   file = new File(getCacheDir(),name);
+
+                int maxBufferSize = 1 * 1024 * 1024;
+
+                try {
+                    InputStream  inputStream = getContentResolver().openInputStream(uri);
+                    Log.e("InputStream Size","Size " + inputStream);
+                    int  bytesAvailable = inputStream.available();
+//                    int bufferSize = 1024;
+                    int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    final byte[] buffers = new byte[bufferSize];
+
+                    FileOutputStream outputStream = new FileOutputStream(file);
+                    int read = 0;
+                    while ((read = inputStream.read(buffers)) != -1) {
+                        outputStream.write(buffers, 0, read);
+                    }
+                    Log.e("File Size","Size " + file.length());
+                    inputStream.close();
+                    outputStream.close();
+
+                    file.getPath();
+                    Log.e("File Path","Path " + file.getPath());
+                    file.length();
+                    Log.e("File Size","Size " + file.length());
+
+//                    if(file.length() > 0){
+//                        attachementImage.setVisibility(View.INVISIBLE);
+//                    }
+
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                try {
+                //    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+//                imageView.setImageBitmap(bitmap);
+//                attachFile.addView(imageView);
+//
+//                attachFile.addView(textView);
+
+                return;
+
+
+
+
+
+//                //////////
+//                Uri selectedImageUri = data.getData();
+//
+//                // OI FILE Manager
+//                String filemanagerstring = selectedImageUri.getPath();
+//
+//
+//                try {
+//                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+//
+//
+//
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                File imageFile = new File(selectedImageUri.getPath());
+//
+//                if(imageFile.isFile())
+//                    Toast.makeText(this,"isFile",Toast.LENGTH_LONG).show();
+//
+//                // MEDIA GALLERY
+//                String selectedImagePath = FilePath.getPath(this, selectedImageUri);//.getPath(); //getPath2(this,selectedImageUri);
+//                if (selectedImagePath != null) {
+//
+//                    HttpTools.uploadFileToServer("http:192.168.1.100:8083/content?name=" + user, selectedImagePath);
+//                }
             }
         }
     }
